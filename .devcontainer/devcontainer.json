@@ -1,0 +1,46 @@
+{
+  "name": "Alpine DevOps - Mercury",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "USERNAME": "alex",
+      "USER_UID": "1000",
+      "USER_GID": "1000"
+    }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/home/alex/.ssh,readonly,type=bind",
+    "source=${localEnv:HOME}/.kube,target=/home/alex/.kube,readonly,type=bind",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "remoteUser": "alex",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "hashicorp.terraform"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        }
+      }
+    }
+  },
+  "postCreateCommand": "chezmoi init --apply https://github.com/alexbenisch/dotfiles.git",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
+  },
+  "forwardPorts": [
+    8000,
+    8080,
+    9090
+  ],
+  "runArgs": [
+    "--network=host"
+  ]
+}
