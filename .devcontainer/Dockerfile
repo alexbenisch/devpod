@@ -1,5 +1,5 @@
 # Dockerfile
-FROM alpine:3.19
+FROM alpine:3.23
 
 # Basis-System
 RUN apk add --no-cache \
@@ -19,7 +19,6 @@ RUN apk add --no-cache \
   ripgrep \
   fd \
   fzf \
-  git-delta \
   bat \
   lazygit
 
@@ -41,16 +40,22 @@ RUN apk add --no-cache kubectl helm
 # Docker CLI (für Docker-in-Docker mit Homelab)
 RUN apk add --no-cache docker-cli
 
+# AWS CLI
+RUN apk add --no-cache aws-cli
+
+# Azure CLI
+RUN apk add --no-cache py3-pip && \
+  pip3 install --break-system-packages azure-cli
+
 # Mise für Tool-Management
 RUN curl https://mise.run | sh && \
   echo 'eval "$(~/.local/bin/mise activate bash)"' >> /root/.bashrc
 
 # Beads Task Manager
-RUN curl -fsSL https://github.com/jwalton/beads/releases/latest/download/beads-linux-x64 -o /usr/local/bin/beads && \
-  chmod +x /usr/local/bin/beads
+RUN curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
 
 # User-Setup (wichtig für Volume-Permissions)
-ARG USERNAME=alexander
+ARG USERNAME=alex
 ARG USER_UID=1000
 ARG USER_GID=1000
 
@@ -69,8 +74,8 @@ RUN git clone https://github.com/LazyVim/starter ~/.config/nvim && \
   nvim --headless "+Lazy! sync" +qa
 
 # Python-Tools
-RUN pip3 install --user --no-cache-dir \
-  poetry \
+RUN pip3 install --user --no-cache-dir --break-system-packages \
+  uv \
   ruff \
   black \
   pytest \

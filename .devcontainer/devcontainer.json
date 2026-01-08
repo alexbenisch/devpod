@@ -16,30 +16,11 @@
   "remoteUser": "alex",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "ms-kubernetes-tools.vscode-kubernetes-tools",
-        "hashicorp.terraform"
-      ],
-      "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "terminal.integrated.profiles.linux": {
-          "bash": {
-            "path": "/bin/bash"
-          }
-        }
-      }
+      "extensions": []
     }
   },
-  "postCreateCommand": "chezmoi init --apply https://github.com/alexbenisch/dotfiles.git",
-  "features": {
-    "ghcr.io/devcontainers/features/azure-cli:1": {},
-    "ghcr.io/devcontainers/features/aws-cli:1": {}
-  },
-  "forwardPorts": [
-    8000,
-    8080,
-    9090
-  ],
+  "postCreateCommand": "(sh -c \"$(curl -fsLS get.chezmoi.io)\" -- init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true) && (sudo sh -c 'printf \"Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n\" > /home/alex/.ssh/config && chown alex:alex /home/alex/.ssh/config && chmod 600 /home/alex/.ssh/config' || true) && (mise trust /workspaces/mercury-gitops 2>/dev/null || true) && (mise trust /home/alex 2>/dev/null || true)",
+  "postStartCommand": "sudo -u alex /home/alex/bin/chezmoi apply --source ~/.local/share/dotfiles 2>/dev/null || true",
   "runArgs": [
     "--network=host"
   ]
