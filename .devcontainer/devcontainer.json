@@ -15,9 +15,7 @@
     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind"
   ],
   "containerEnv": {
-    "SSH_AUTH_SOCK": "/ssh-agent",
-    "TMPDIR": "/home/alex/.cache/tmp",
-    "PATH": "/home/alex/.local/bin:/usr/local/bin:/usr/bin:/bin"
+    "SSH_AUTH_SOCK": "/ssh-agent"
   },
   "remoteUser": "alex",
   "customizations": {
@@ -25,8 +23,8 @@
       "extensions": []
     }
   },
-  "postCreateCommand": "mkdir -p ~/.ssh ~/.cache/tmp && cp -r ~/.ssh-host/* ~/.ssh/ 2>/dev/null; chmod 700 ~/.ssh && chmod 600 ~/.ssh/* 2>/dev/null; printf 'Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n' > ~/.ssh/config; curl -fsSL https://mise.run | sh; (curl -fsSL https://raw.githubusercontent.com/alexbenisch/dotfiles/main/setup-devcontainer | sh || true); (chezmoi init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true); (mise trust /workspaces 2>/dev/null || true); (mise trust ~ 2>/dev/null || true)",
-  "postStartCommand": "mkdir -p ~/.cache/tmp; chezmoi apply --source ~/.local/share/dotfiles 2>/dev/null || true",
+  "postCreateCommand": "mkdir -p ~/.ssh ~/.cache/tmp && cp -r ~/.ssh-host/* ~/.ssh/ 2>/dev/null; chmod 700 ~/.ssh && chmod 600 ~/.ssh/* 2>/dev/null; printf 'Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n' > ~/.ssh/config; curl -fsSL https://mise.run | sh; export PATH=\"$HOME/.local/bin:$PATH\" TMPDIR=\"$HOME/.cache/tmp\"; (curl -fsSL https://raw.githubusercontent.com/alexbenisch/dotfiles/main/setup-devcontainer | sh || true); (TMPDIR=\"$HOME/.cache/tmp\" chezmoi init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true); (~/.local/bin/mise trust /workspaces 2>/dev/null || true); (~/.local/bin/mise trust ~ 2>/dev/null || true)",
+  "postStartCommand": "mkdir -p ~/.cache/tmp; TMPDIR=~/.cache/tmp chezmoi apply --source ~/.local/share/dotfiles 2>/dev/null || true",
   "runArgs": [
     "--network=host"
   ]
