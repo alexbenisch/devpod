@@ -23,7 +23,7 @@
       "extensions": []
     }
   },
-  "postCreateCommand": "mkdir -p ~/.ssh && cp -r ~/.ssh-host/* ~/.ssh/ 2>/dev/null; chmod 700 ~/.ssh && chmod 600 ~/.ssh/* 2>/dev/null; printf 'Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n' > ~/.ssh/config && curl https://mise.run | sh && (curl -fsSL https://raw.githubusercontent.com/alexbenisch/dotfiles/main/setup-devcontainer | sh || true) && (chezmoi init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true) && (mise trust /workspaces/mercury-gitops 2>/dev/null || true) && (mise trust /home/alex 2>/dev/null || true)",
+  "postCreateCommand": "mkdir -p ~/.ssh && cp -r ~/.ssh-host/* ~/.ssh/ 2>/dev/null; chmod 700 ~/.ssh && chmod 600 ~/.ssh/* 2>/dev/null; printf 'Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n' > ~/.ssh/config; curl -fsSL https://mise.run | sh; export PATH=\"$HOME/.local/bin:$PATH\"; mkdir -p ~/.cache/chezmoi-tmp && export TMPDIR=~/.cache/chezmoi-tmp; (curl -fsSL https://raw.githubusercontent.com/alexbenisch/dotfiles/main/setup-devcontainer | sh || true); (chezmoi init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true); (~/.local/bin/mise trust /workspaces/mercury-gitops 2>/dev/null || true); (~/.local/bin/mise trust /home/alex 2>/dev/null || true)",
   "postStartCommand": "chezmoi apply --source ~/.local/share/dotfiles 2>/dev/null || true",
   "runArgs": [
     "--network=host"
