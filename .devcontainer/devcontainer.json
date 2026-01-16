@@ -9,7 +9,7 @@
     }
   },
   "mounts": [
-    "source=${localEnv:HOME}/.ssh,target=/home/alex/.ssh,readonly,type=bind",
+    "source=${localEnv:HOME}/.ssh,target=/home/alex/.ssh-host,readonly,type=bind",
     "source=${localEnv:HOME}/.kube,target=/home/alex/.kube,readonly,type=bind",
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
@@ -19,8 +19,8 @@
       "extensions": []
     }
   },
-  "postCreateCommand": "(sh -c \"$(curl -fsLS get.chezmoi.io)\" -- init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true) && (sudo sh -c 'printf \"Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n\" > /home/alex/.ssh/config && chown alex:alex /home/alex/.ssh/config && chmod 600 /home/alex/.ssh/config' || true) && (mise trust /workspaces/mercury-gitops 2>/dev/null || true) && (mise trust /home/alex 2>/dev/null || true)",
-  "postStartCommand": "sudo -u alex /home/alex/bin/chezmoi apply --source ~/.local/share/dotfiles 2>/dev/null || true",
+  "postCreateCommand": "mkdir -p ~/.ssh && cp -r ~/.ssh-host/* ~/.ssh/ 2>/dev/null; chmod 700 ~/.ssh && chmod 600 ~/.ssh/* 2>/dev/null; printf 'Host github.com\\nStrictHostKeyChecking no\\nUserKnownHostsFile=/dev/null\\nIdentityFile ~/.ssh/mercury\\n' > ~/.ssh/config && (curl -fsSL https://raw.githubusercontent.com/alexbenisch/dotfiles/main/setup-devcontainer | sh || true) && (chezmoi init --apply --source ~/.local/share/dotfiles alexbenisch/dotfiles || true) && (mise trust /workspaces/mercury-gitops 2>/dev/null || true) && (mise trust /home/alex 2>/dev/null || true)",
+  "postStartCommand": "chezmoi apply --source ~/.local/share/dotfiles 2>/dev/null || true",
   "runArgs": [
     "--network=host"
   ]
