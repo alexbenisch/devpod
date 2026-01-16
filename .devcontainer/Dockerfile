@@ -1,7 +1,7 @@
 # Dockerfile
 FROM alpine:3.23
 
-# Basis-System
+# Basis-System + gcompat for glibc binaries (mise, chezmoi, etc.)
 RUN apk add --no-cache \
   zsh \
   git \
@@ -10,7 +10,9 @@ RUN apk add --no-cache \
   openssh-client \
   gnupg \
   shadow \
-  sudo
+  sudo \
+  gcompat \
+  libstdc++
 
 # Entwickler-Tools
 RUN apk add --no-cache \
