@@ -1,22 +1,18 @@
-# Dockerfile - Wolfi (glibc-based, small, up-to-date)
-FROM cgr.dev/chainguard/wolfi-base:latest
+# Dockerfile
+FROM alpine:3.23
 
-# Switch to root for package installation
-USER root
-
-# Basis-System (Wolfi uses glibc - no compatibility issues with mise/chezmoi)
+# Basis-System + gcompat for glibc binaries (mise, chezmoi, etc.)
 RUN apk add --no-cache \
   zsh \
-  bash \
   git \
   curl \
-  wget \
   ca-certificates \
   openssh-client \
   gnupg \
-  sudo \
   shadow \
-  glibc-locale-posix
+  sudo \
+  gcompat \
+  libstdc++
 
 # Entwickler-Tools
 RUN apk add --no-cache \
@@ -25,7 +21,8 @@ RUN apk add --no-cache \
   ripgrep \
   fd \
   fzf \
-  bat
+  bat \
+  lazygit
 
 # Python für deine Backend-Projekte
 RUN apk add --no-cache \
@@ -45,6 +42,13 @@ RUN apk add --no-cache kubectl helm
 # Docker CLI (für Docker-in-Docker mit Homelab)
 RUN apk add --no-cache docker-cli
 
+# AWS CLI
+RUN apk add --no-cache aws-cli
+
+# Azure CLI
+RUN apk add --no-cache py3-pip && \
+  pip3 install --break-system-packages azure-cli
+
 # User-Setup (wichtig für Volume-Permissions)
 ARG USERNAME=alex
 ARG USER_UID=1000
@@ -52,10 +56,7 @@ ARG USER_GID=1000
 
 RUN addgroup -g $USER_GID $USERNAME && \
   adduser -D -u $USER_UID -G $USERNAME -s /bin/zsh $USERNAME && \
-  mkdir -p /etc/sudoers.d && \
   echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME && \
-  chmod 440 /etc/sudoers.d/$USERNAME && \
-  mkdir -p /home/$USERNAME && \
   chown -R $USERNAME:$USERNAME /home/$USERNAME
 
 USER $USERNAME
