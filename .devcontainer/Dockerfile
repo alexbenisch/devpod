@@ -60,9 +60,13 @@ RUN addgroup -g $USER_GID $USERNAME && \
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
+# Create directories needed by containerEnv
+RUN mkdir -p /home/$USERNAME/.cache/tmp /home/$USERNAME/.local/bin
+
 # Set PATH early so tools installed by pip are found
 ENV PATH="/home/$USERNAME/.local/bin:$PATH"
 ENV EDITOR=nvim
+ENV TMPDIR="/home/$USERNAME/.cache/tmp"
 
 # Mise für Tool-Management
 RUN curl https://mise.run | sh && \
