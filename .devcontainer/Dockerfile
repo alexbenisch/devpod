@@ -39,6 +39,16 @@ RUN apk add --no-cache \
 # Node.js (für LazyVim LSP-Server)
 RUN apk add --no-cache nodejs npm
 
+# Network diagnostic tools
+RUN apk add --no-cache \
+  openssl \
+  iputils \
+  nmap \
+  bind-tools \
+  traceroute \
+  less \
+  coreutils
+
 # Kubernetes-Tools
 RUN apk add --no-cache kubectl helm
 
